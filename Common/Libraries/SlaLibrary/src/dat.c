@@ -43,11 +43,11 @@ double slaDat ( double utc )
 **     :     occasion that a leap second is      :
 **     :                announced                :
 **     :                                         :
-**     :  Latest leap second:  2009 January 1    :
+**     :  Latest leap second:  2012 July  1st    :
 **     :                                         :
 **     :-----------------------------------------:
 **
-**  Last revision:   05 Jan 2009
+**  Last revision:   06 August 2012
 **
 **  Copyright 1999 P.T.Wallace.  All rights reserved.
 */
@@ -60,6 +60,9 @@ double slaDat ( double utc )
 /* - - - - - - - - - - - - - - - - - - - - - */
 
 /* ireference http://time5.nrc.ca/timefreq/IERS.html */
+
+/* 2012 July 1 */
+	if (utc>=56109.0) return 35.0;
 
 /* 2009 junuary 1 */
 	if (utc>=54832.0) return 34.0;
