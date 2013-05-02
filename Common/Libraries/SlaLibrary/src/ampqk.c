@@ -12,10 +12,10 @@ void slaAmpqk ( double ra, double da, double amprms[21],
 **  The mean coordinate system is the post IAU 1976 system,
 **  loosely called FK5.
 **
-**  Use of this routine is appropriate when efficiency is important
+**  Use of this function is appropriate when efficiency is important
 **  and where many star positions are all to be transformed for
 **  one epoch and equinox.  The star-independent parameters can be
-**  obtained by calling the slaMappa routine.
+**  obtained by calling the slaMappa function.
 **
 **  Given:
 **     ra       double      apparent RA (radians)
@@ -26,9 +26,9 @@ void slaAmpqk ( double ra, double da, double amprms[21],
 **       (0)      time interval for proper motion (Julian years)
 **       (1-3)    barycentric position of the Earth (AU)
 **       (4-6)    heliocentric direction of the Earth (unit vector)
-**       (7)      (grav rad Sun)*2/(Sun-Earth distance)
+**       (7)      (Schwarzschild radius of the Sun)/(Sun-Earth distance)
 **       (8-10)   abv: barycentric Earth velocity in units of c
-**       (11)     sqrt(1-v*v) where v=modulus(abv)
+**       (11)     sqrt(1-v^2) where v=modulus(abv)
 **       (12-20)  precession/nutation (3,3) matrix
 **
 **  Returned:
@@ -42,7 +42,7 @@ void slaAmpqk ( double ra, double da, double amprms[21],
 **  Note:
 **
 **     Iterative techniques are used for the aberration and
-**     light deflection corrections so that the routines
+**     light deflection corrections so that the functions
 **     slaAmp (or slaAmpqk) and slaMap (or slaMapqk) are
 **     accurate inverses;  even at the edge of the Sun's disc
 **     the discrepancy is only about 1 nanoarcsecond.
@@ -50,13 +50,13 @@ void slaAmpqk ( double ra, double da, double amprms[21],
 **  Called:  slaDcs2c, slaDimxv, slaDvdv, slaDvn, slaDcc2s,
 **           slaDranrm
 **
-**  Last revision:   7 May 2000
+**  Last revision:   23 August 2012
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
 {
-   double gr2e;    /* (grav rad Sun)*2/(Sun-Earth distance) */
-   double ab1;     /* sqrt(1-v*v) where v=modulus of Earth vel */
+   double gr2e;    /* (Schwarzschild rad Sun)/(Sun-Earth distance) */
+   double ab1;     /* sqrt(1-v^2) where v=modulus of Earth vel */
    double ehn[3];  /* Earth position wrt Sun (unit vector, FK5) */
    double abv[3];  /* Earth velocity wrt SSB (c, FK5) */
    double p[3], p1[3], p2[3], p3[3];  /* work vectors */

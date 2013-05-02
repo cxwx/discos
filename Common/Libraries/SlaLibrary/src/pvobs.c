@@ -19,11 +19,19 @@ void slaPvobs ( double p, double h, double stl, double pv[6] )
 **     pv    double[6]  position/velocity 6-vector (au, au/s, true
 **                                         equator and equinox of date)
 **
-**  IAU 1976 constants are used.
+**  Notes:
+**
+**   1) IAU 1976 constants are used.
+**
+**   2) Polar motion is neglected.
+**
+**   3) If local Earth rotation angle is supplied instead of local
+**      apparent sidereal time, the result is with respect to the
+**      celestial intermediate origin instead of the equinox.
 **
 **  Called:  slaGeoc
 **
-**  Last revision:   14 November 1994
+**  Last revision:   18 March 2013
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */

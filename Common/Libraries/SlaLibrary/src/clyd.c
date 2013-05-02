@@ -23,7 +23,7 @@ void slaClyd ( int iy, int im, int id, int *ny, int *nd, int *jstat )
 **
 **  Notes:
 **
-**  1  This routine exists to support the low-precision routines
+**  1  This function exists to support the low-accuracy functions
 **     slaEarth, slaMoon and slaEcor.
 **
 **  2  Between 1900 March 1 and 2100 February 28 it returns answers
@@ -37,36 +37,37 @@ void slaClyd ( int iy, int im, int id, int *ny, int *nd, int *jstat )
 **     day.  See 12.92-1 and 12.95-1 in the reference.
 **
 **  Reference:  Explanatory Supplement to the Astronomical Almanac,
-**              ed P.K.Seidelmann, University Science Books (1992),
+**              ed. P.K.Seidelmann, University Science Books (1992),
 **              p604-606.
 **
-**  Last revision:   26 November 1994
+**  Last revision:   28 February 2007
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
 {
+   int ly;
    long i, j, k, l, n, iyL, imL;
 
 /* Month lengths in days */
-   static int mtab[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+   static int mtab[12]
+                   = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 
 
-/* Validate year */
+/* Validate year. */
    if ( iy < -4711 ) { *jstat = 1; return; }
 
-/* Validate month */
+/* Validate month. */
    if ( ( im < 1 ) || ( im > 12 ) ) { *jstat = 2; return; }
 
-/* Allow for (Gregorian) leap year */
-   mtab[1] = ( ( ( iy % 4 ) == 0 ) &&
-             ( ( ( iy % 100 ) != 0 ) || ( ( iy % 400 ) == 0 ) ) ) ?
-             29 : 28;
+/* Allow for (Gregorian) leap year. */
+   ly = ( ( im == 2 ) && ( iy%4 == 0 ) &&
+                               ( iy%100 != 0 || iy%400 == 0 ) ) ? 1 : 0;
 
-/* Validate day */
-   *jstat = ( id < 1 || id > mtab[im-1] ) ? 3 : 0;
+/* Validate day. */
+   *jstat = ( id < 1 || id > ( mtab[im-1] + ly ) ) ? 3 : 0;
 
-/* Perform the conversion */
+/* Perform the conversion. */
    iyL = (long) iy;
    imL = (long) im;
    i = ( 14 - imL ) /12L;

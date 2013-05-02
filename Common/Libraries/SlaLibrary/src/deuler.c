@@ -1,7 +1,7 @@
 #include "slalib.h"
 #include "slamac.h"
 #include <string.h>
-void slaDeuler ( char *order, double phi, double theta,
+void slaDeuler ( const char *order, double phi, double theta,
                  double psi, double rmat[3][3] )
 /*
 **  - - - - - - - - - -
@@ -44,7 +44,7 @@ void slaDeuler ( char *order, double phi, double theta,
 **  angle arguments are ignored.  Zero rotations leaves rmat set to the
 **  identity matrix.
 **
-**  Last revision:   9 December 1996
+**  Last revision:   13 July 2008
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
@@ -61,7 +61,7 @@ void slaDeuler ( char *order, double phi, double theta,
    }
 
 /* Establish length of axis string */
-   l = strlen ( order );
+   l = (int) strlen ( order );
 
 /* Look at each character of axis string until finished */
    for ( n = 0; n < 3; n++ ) {

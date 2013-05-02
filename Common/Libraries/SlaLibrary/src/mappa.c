@@ -9,7 +9,7 @@ void slaMappa ( double eq, double date, double amprms[21] )
 **  Compute star-independent parameters in preparation for
 **  conversions between mean place and geocentric apparent place.
 **
-**  The parameters produced by this routine are required in the
+**  The parameters produced by this function are required in the
 **  parallax, light deflection, aberration, and precession/nutation
 **  parts of the mean/apparent transformations.
 **
@@ -25,9 +25,9 @@ void slaMappa ( double eq, double date, double amprms[21] )
 **       (0)      time interval for proper motion (Julian years)
 **       (1-3)    barycentric position of the Earth (AU)
 **       (4-6)    heliocentric direction of the Earth (unit vector)
-**       (7)      (grav rad Sun)*2/(Sun-Earth distance)
+**       (7)      (Schwarzschild radius of Sun)/(Sun-Earth distance)
 **       (8-10)   abv: barycentric Earth velocity in units of c
-**       (11)     sqrt(1-v**2) where v=modulus(abv)
+**       (11)     sqrt(1-v^2) where v=modulus(abv)
 **       (12-20)  precession/nutation (3,3) matrix
 **
 **  References:
@@ -43,33 +43,29 @@ void slaMappa ( double eq, double date, double amprms[21] )
 **  2)  The vectors amprms(1-3) and amprms(4-6) are referred to the
 **      mean equinox and equator of epoch eq.
 **
-**  3)  The parameters AMPRMS produced by this routine are used by
+**  3)  The parameters amprms produced by this function are used by
 **      slaAmpqk, slaMapqk and slaMapqkz.
 **
-**  4)  The accuracy is limited by imperfections in the IAU 1976/1980
-**      models for precession and nutation.  Corrections are tabulated
-**      in IERS Bulletin B and at the present epoch are of order 50 mas.
-**      An improved precession-nutation model can be introduced by
-**      first calling the present routine and then replacing the
-**      precession-nutation matrix into the AMPRMS array directly.
+**  4)  The accuracy is sub-milliarcsecond, limited by the
+**      precession-nutation model (IAU 1976 precession, Shirai &
+**      Fukushima 2001 forced nutation and precession corrections).
 **
-**  5)  A further limit to the accuracy of routines using the parameter
-**      array AMPRMS is imposed by the routine slaEvp, used here to
+**  5)  A further limit to the accuracy of functions using the parameter
+**      array amprms is imposed by the function slaEvp, used here to
 **      compute the Earth position and velocity by the methods of
 **      Stumpff.  The maximum error in the resulting aberration
 **      corrections is about 0.3 milliarcsecond.
 **
-**  Called:
-**     slaEpj, slaEvp, slaDvn, slaPrenut
+**  Called:  slaEpj, slaEvp, slaDvn, slaPrenut
 **
-**  Last revision:   8 May 2000
+**  Last revision:   23 August 2012
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
 
 #define CR 499.004782     /* Light time for 1 AU (sec) */
-#define GR2 1.974126e-8   /* Gravitational radius of the Sun x 2:
-                                                  (2*mu/c**2, au) */
+#define GR2 ( 2.0 * 9.87063e-9 ) /* Schwarzschild radius of the Sun:
+                                                  (2*mu/c**2, AU) */
 {
    int i;
 

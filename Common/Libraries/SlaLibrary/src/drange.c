@@ -13,11 +13,11 @@ double slaDrange ( double angle )
 **  Given:
 **     angle     double      the angle in radians
 **
-**  The result is angle expressed in the +/- pi (double precision).
+**  The result is angle expressed in the range +/- pi.
 **
 **  Defined in slamac.h:  DPI, D2PI, dmod
 **
-**  Last revision:   19 March 1996
+**  Last revision:   8 May 2012
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
@@ -25,5 +25,5 @@ double slaDrange ( double angle )
   double w;
 
   w = dmod ( angle, D2PI );
-  return ( fabs ( w ) < DPI ) ? w : w - dsign ( D2PI, angle );
+  return ( fabs ( w ) <= DPI ) ? w : w - dsign ( D2PI, angle );
 }

@@ -1,6 +1,6 @@
 #include "slalib.h"
 #include "slamac.h"
-void slaEuler ( char *order, float phi, float theta, float psi,
+void slaEuler ( const char *order, float phi, float theta, float psi,
                 float rmat[3][3] )
 /*
 **  - - - - - - - - -
@@ -45,7 +45,7 @@ void slaEuler ( char *order, float phi, float theta, float psi,
 **
 **  Called:  slaDeuler
 **
-**  Last revision:   9 December 1996
+**  Last revision:   15 July 2008
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */

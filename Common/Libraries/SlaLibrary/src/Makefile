@@ -60,7 +60,7 @@ LIBRARIES       = SlaLibrary
 LIBRARIES_L     =
 SlaLibrary_OBJECTS = addet afin airmas altaz amp \
 	ampqk aop aoppa aoppat aopqk atmdsp \
-	av2m bear caf2r caldj calyd cc2s \
+	av2m bear c2i c2ipa c2ipad c2ipas c2iqk caf2r c2iqkz caldj calyd cc2s \
 	cc62s cd2tf cldj clyd combn cr2af cr2tf \
 	cs2c cs2c6 ctf2d ctf2r daf2r dafin \
 	dat dav2m dbear dbjin dc62s dcc2s \
@@ -70,21 +70,23 @@ SlaLibrary_OBJECTS = addet afin airmas altaz amp \
 	drange dranrm ds2c6 ds2tp dsep dsepv dt \
 	dtf2d dtf2r dtp2s dtp2v dtps2c dtpv2c \
 	dtt dv2tp dvdv dvn dvxv e2h earth \
-	ecleq ecmat ecor eg50 el2ue epb \
-	epb2d epco epj epj2d eqecl eqeqx \
-	eqgal etrms euler evp fitxy fk425 \
-	fk45z fk524 fk52h fk54z fk5hz flotin \
-	galeq galsup ge50 geoc gmst gmsta \
+	ecleq ecmat ecor eg50 el2ue eo eors epb \
+	epb2d epco epj epj2d epv eqecl eqeqx \
+	eqgal era etrms euler evp fitxy fk425 \
+	fk45z fk524 fk52h fk54z fk5hz flotin fw2m fw2xy \
+	g2ixys galeq galsup ge50 geoc gmst gmsta gst \
 	h2e h2fk5 hfk5z imxv intin invf \
+	i2c i2cqk i2o i2opa i2opad i2opat i2oqk int2in \
 	kbj m2av map mappa mapqk mapqkz \
 	moon mxm mxv nut nutc oap oapqk \
-	obs pa pav pcd pda2h pdq2h permut \
-	pertel pertue planel planet plante pm \
-	polmo prebn prec precl preces prenut \
+	nu00a nu nutc80\
+	o2i o2iqk obs pa pav pcd pda2h pdq2h permut \
+	pertel pertue pfw planel planet plante plantu pm pncio pneqx\
+	polmo pomom prebn prec precl preces prenut \
 	pvobs pv2el pv2ue pxy range ranorm \
 	rcc rdplan refco refcoq refro refv \
 	refz rverot rvgalc rvlg rvlsrd rvlsrk \
-	s2tp sep sepv smat subet supgal \
+	s s2tp sep sepv smat sp subet supgal \
 	svd svdcov svdsol tp2s tp2v tps2c \
 	tpv2c ue2el ue2pv unpcd v2tp vdv \
 	vn vxv xy2xy zd 

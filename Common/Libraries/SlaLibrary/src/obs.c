@@ -43,7 +43,7 @@ void slaObs ( int n, char *c, char *name, double *w, double *p, double *h )
 **     in their current states.
 **
 **     Programs can obtain a list of all currently supported
-**     stations by calling the routine repeatedly, with n=1,2,3...
+**     stations by calling the function repeatedly, with n=1,2,3...
 **     When name="?" is seen, the list of stations has been
 **     exhausted.
 **
@@ -78,7 +78,7 @@ void slaObs ( int n, char *c, char *name, double *w, double *p, double *h )
 **
 **  Defined in slamac.h:  DAS2R
 **
-**  Last revision:   16 February 2001
+**  Last revision:   28 October 2010
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
@@ -136,13 +136,13 @@ void slaObs ( int n, char *c, char *name, double *w, double *p, double *h )
          2364.0
       },
 
-/* Lick 120" (1984 Almanac) */
+/* Lick 120" (S.L.Allen, private communication, 2002) */
       {
          "LICK120",
          "Lick 120 inch",
-         WEST(121,38, 9.9),
-         NORTH(37,20,35.2),
-         1290.0
+         WEST(121,38,13.689),
+         NORTH(37,20,34.931),
+         1286.0
       },
 
 /* MMT 6.5m conversion (MMT Observatory website) */
@@ -199,10 +199,10 @@ void slaObs ( int n, char *c, char *name, double *w, double *p, double *h )
          1149.0
       },
 
-/* Greenbank 140' (1983 Almanac) */
+/* Green Bank 140' (1983 Almanac) */
       {
          "GBVA140",
-         "Greenbank 140 foot",
+         "Green Bank 140 foot",
          WEST(79,50, 9.61),
          NORTH(38,26,15.4),
          881.0
@@ -348,7 +348,7 @@ void slaObs ( int n, char *c, char *name, double *w, double *p, double *h )
       {
          "MAUNAK88",
          "Mauna Kea 88 inch",
-         WEST(155,28,09.96),
+         WEST(155,28, 9.96),
          NORTH(19,49,22.77),
          4213.6
       },
@@ -543,10 +543,10 @@ void slaObs ( int n, char *c, char *name, double *w, double *p, double *h )
          366.0
       },
 
-/* Greenbank 300' (1981 Almanac - defunct) */
+/* Green Bank 300' (1981 Almanac - defunct) */
       {
          "GBVA300",
-         "Greenbank 300 foot",
+         "Green Bank 300 foot",
          WEST(79,50,56.36),
          NORTH(38,25,46.3),
          894.0
@@ -676,7 +676,7 @@ void slaObs ( int n, char *c, char *name, double *w, double *p, double *h )
       {
          "UKST",
          "UK 1.2 metre Schmidt, Siding Spring",
-         EAST(149,04,12.8),
+         EAST(149, 4,12.8),
          SOUTH(31,16,27.8),
          1145.0
       },
@@ -734,7 +734,7 @@ void slaObs ( int n, char *c, char *name, double *w, double *p, double *h )
       {
          "CFHT",
          "Canada-France-Hawaii 3.6m Telescope",
-         WEST(155,28,07.95),
+         WEST(155,28, 7.95),
          NORTH(19,49,30.91),
          4204.1
       },
@@ -754,7 +754,7 @@ void slaObs ( int n, char *c, char *name, double *w, double *p, double *h )
       {
          "GEMININ",
          "Gemini North 8-m telescope",
-         WEST(155,28,08.57),
+         WEST(155,28, 8.57),
          NORTH(19,49,25.69),
          4213.4
       },
@@ -814,7 +814,7 @@ void slaObs ( int n, char *c, char *name, double *w, double *p, double *h )
       {
          "VLT3",
          "ESO VLT, Paranal, Chile: UT3",
-         WEST(70,24,09.896),
+         WEST(70,24, 9.896),
          SOUTH(24,37,30.300),
          2635.43
       },
@@ -824,19 +824,19 @@ void slaObs ( int n, char *c, char *name, double *w, double *p, double *h )
       {
          "VLT4",
          "ESO VLT, Paranal, Chile: UT4",
-         WEST(70,24,08.000),
+         WEST(70,24, 8.000),
          SOUTH(24,37,31.000),
          2635.43
       },
 
 /* Gemini South, Cerro Pachon
-   (GPS readings by Rolando Rogers) */
+   (GPS readings by Patrick Wallace) */
       {
          "GEMINIS",
          "Gemini South 8-m telescope",
-         WEST(70,44,12.1),
+         WEST(70,44,11.5),
          SOUTH(30,14,26.7),
-         2722.0
+         2738.0
       },
 
 /* Cologne Observatory for Submillimeter Astronomy (KOSMA)
@@ -855,7 +855,7 @@ void slaObs ( int n, char *c, char *name, double *w, double *p, double *h )
          "MAGELLAN1",
          "Magellan 1, 6.5m, Las Campanas",
          WEST(70,41,31.9),
-         SOUTH(29,00,51.7),
+         SOUTH(29, 0,51.7),
          2408.0
       },
 
@@ -865,8 +865,26 @@ void slaObs ( int n, char *c, char *name, double *w, double *p, double *h )
          "MAGELLAN2",
          "Magellan 2, 6.5m, Las Campanas",
          WEST(70,41,33.5),
-         SOUTH(29,00,50.3),
+         SOUTH(29, 0,50.3),
          2408.0
+      },
+
+/* Hobby-Eberly Telescope (www.as.utexas.edu/mcdonald/het/het) */
+      {
+         "HET",
+         "Hobby-Eberly Telescope",
+         WEST(104, 0,53.0),
+         NORTH(30,40,53.2),
+         2026.0
+      },
+
+/* Green Bank 100m (GBT Proposers' Guide 2010/9/3) */
+      {
+         "GBT",
+         "Green Bank 100m",
+         WEST(79,50,23.406),
+         NORTH(38,25,59.236),
+         807.43
       }
    };
 
@@ -874,7 +892,7 @@ void slaObs ( int n, char *c, char *name, double *w, double *p, double *h )
 
 /* ------------------------------------------------------------------- */
 
-   int m;
+   int m, i, ic;
 
 
 /* Station specified by number or identifier? */
@@ -888,8 +906,12 @@ void slaObs ( int n, char *c, char *name, double *w, double *p, double *h )
    } else {
 
    /* Station specified by identifier:  determine corresponding number */
+      for ( i = 0; i < 10; i++ ) {
+         ic = (int) c[i];
+         if ( ic == ' ' || ic == '\0' ) break;
+      }
       for ( m = 0; m < NMAX; m++ ) {
-         if ( ! strncmp ( c, statab[m].id, 10 ) ) {
+         if ( ! strncmp ( c, statab[m].id, i ) ) {
             break;
          }
       }

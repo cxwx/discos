@@ -21,7 +21,7 @@ void slaFitxy ( int itype, int np,
 **     *j       int            status:  0 = OK
 **                                     -1 = illegal itype
 **                                     -2 = insufficient data
-**                                     -3 = singular solution
+**                                     -3 = no solution
 **
 **  Notes:
 **
@@ -68,27 +68,31 @@ void slaFitxy ( int itype, int np,
 **
 **  Called:  slaDmat, slaDmxv
 **
-**  Last revision:   11 April 2001
+**  Last revision:   22 January 2013
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
 {
-   int i, jstat;
+   int jstat, i;
    int iw[4];
    int nsol;
-   double p, sxe, sxexm, sxeym, sye, syeym, syexm, sxm,
+   double a, b, c, d, aold, bold, cold, dold, sold,
+          p, sxe, sxexm, sxeym, sye, syeym, syexm, sxm,
           sym, sxmxm, sxmym, symym, xe, ye,
           xm, ym, v[4], dm3[3][3], dm4[4][4], det,
-          sgn, sxxyy, sxyyx, sx2y2, a, b, c, d,
-          sdr2, xr, yr, aold, bold, cold, dold, sold;
+          sgn, sxxyy, sxyyx, sx2y2, sdr2, xr, yr;
 
-/* Preset the status */
+/* Preset the status. */
    *j = 0;
 
-/* Float the number of samples */
+/* Variable initializations to avoid compiler warnings. */
+   jstat = 0;
+   a = b = c = d = aold = bold = cold = dold = sold = sdr2 = 0.0;
+
+/* Float the number of samples. */
    p = (double) np;
 
-/* Check itype */
+/* Check model type. */
    if ( itype == 6 ) {
 
 /*
@@ -96,10 +100,10 @@ void slaFitxy ( int itype, int np,
 ** ----------------------------
 */
 
-   /* Check enough samples */
+   /* Check enough samples. */
       if ( np >= 3 ) {
 
-   /* Form summations */
+   /* Form summations. */
          sxe = 0.0;
          sxexm = 0.0;
          sxeym = 0.0;
@@ -117,20 +121,20 @@ void slaFitxy ( int itype, int np,
             ye = xye[i][1];
             xm = xym[i][0];
             ym = xym[i][1];
-            sxe = sxe + xe;
-            sxexm = sxexm + xe * xm;
-            sxeym = sxeym + xe * ym;
-            sye = sye + ye;
-            syeym = syeym + ye * ym;
-            syexm = syexm + ye * xm;
-            sxm = sxm + xm;
-            sym = sym + ym;
-            sxmxm = sxmxm + xm * xm;
-            sxmym = sxmym + xm * ym;
-            symym = symym + ym * ym;
+            sxe += xe;
+            sxexm += xe*xm;
+            sxeym += xe*ym;
+            sye += ye;
+            syeym += ye*ym;
+            syexm += ye*xm;
+            sxm += xm;
+            sym += ym;
+            sxmxm += xm*xm;
+            sxmym += xm*ym;
+            symym += ym*ym;
          }
 
-      /* Solve for a,b,c in  xe = a + b*xm + c*ym */
+      /* Solve for a,b,c in  xe = a + b*xm + c*ym. */
          v[0] = sxe;
          v[1] = sxexm;
          v[2] = sxeym;
@@ -149,19 +153,19 @@ void slaFitxy ( int itype, int np,
                coeffs[i] = v[i];
             }
 
-         /* Solve for d,e,f in  ye = d + e*xm + f*ym */
+         /* Solve for d,e,f in  ye = d + e*xm + f*ym. */
             v[0] = sye;
             v[1] = syexm;
             v[2] = syeym;
             slaDmxv ( dm3, v, &coeffs[3] );
          } else {
 
-         /* No 6-coefficient solution possible */
+         /* No 6-coefficient solution possible. */
             *j = -3;
          }
       } else {
 
-      /* Insufficient data for 6-coefficient fit */
+      /* Insufficient data for 6-coefficient fit. */
          *j = -2;
       }
    } else if ( itype == 4 ) {
@@ -171,14 +175,14 @@ void slaFitxy ( int itype, int np,
    ** ------------------------------------------
    */
 
-   /* Check enough samples */
+   /* Check enough samples. */
       if ( np >= 2 ) {
 
-      /* Try two solutions, first without then with flip in x */
+      /* Try two solutions, first without then with flip in x. */
          for ( nsol = 1; nsol <= 2; nsol++ ) {
             sgn = ( nsol == 1 ) ? 1.0 : -1.0;
 
-         /* Form summations*/
+         /* Form summations. */
             sxe = 0.0;
             sxxyy = 0.0;
             sxyyx = 0.0;
@@ -191,13 +195,13 @@ void slaFitxy ( int itype, int np,
                ye = xye[i][1];
                xm = xym[i][0];
                ym = xym[i][1];
-               sxe = sxe + xe;
-               sxxyy = sxxyy + xe * xm + ye * ym;
-               sxyyx = sxyyx + xe * ym - ye * xm;
-               sye = sye + ye;
-               sxm = sxm + xm;
-               sym = sym + ym;
-               sx2y2 = sx2y2 + xm * xm + ym * ym;
+               sxe += xe;
+               sxxyy += xe*xm + ye*ym;
+               sxyyx += xe*ym - ye*xm;
+               sye += ye;
+               sxm += xm;
+               sym += ym;
+               sx2y2 += xm*xm + ym*ym;
             }
 
          /*
@@ -227,23 +231,23 @@ void slaFitxy ( int itype, int np,
             slaDmat ( 4, dm4[0], v, &det, &jstat, iw );
             if ( jstat == 0 ) {
 
-            /* Non-singular */
+            /* Non-singular. */
                a = v[0];
                b = v[1];
                c = v[2];
                d = v[3];
 
-            /* Determine sum of radial errors squared */
+            /* Determine sum of radial errors squared. */
                sdr2 = 0.0;
                for ( i = 0; i < np; i++ ) {
                   xm = xym[i][0];
                   ym = xym[i][1];
-                  xr = a + b * xm - c * ym - xye[i][0] * sgn;
-                  yr = d + c * xm + b * ym- xye[i][1];
-                  sdr2 = sdr2 + xr * xr + yr * yr;
+                  xr = a + b*xm - c*ym - xye[i][0]*sgn;
+                  yr = d + c*xm + b*ym - xye[i][1];
+                  sdr2 += xr*xr + yr*yr;
                }
 
-            /* If first pass, save variables */
+            /* If first pass, save variables. */
                if ( nsol == 1 ) {
                   aold = a;
                   bold = b;
@@ -254,13 +258,13 @@ void slaFitxy ( int itype, int np,
 
             } else {
 
-            /* Singular: set flag */
+            /* Singular: set flag. */
                sdr2 = -1.0;
             }
          }
 
-      /* Pick the best of the two solutions */
-         if ( sold >= 0.0 && sold <= sdr2 ) {
+      /* Pick the best of the two solutions. */
+         if ( sold >= 0.0 && ( sold <= sdr2 || np == 2 ) ) {
             coeffs[0] = aold;
             coeffs[1] = bold;
             coeffs[2] = -cold;
@@ -276,17 +280,17 @@ void slaFitxy ( int itype, int np,
             coeffs[5] = b;
          } else {
 
-         /* No 4-coefficient fit possible */
+         /* No 4-coefficient fit possible. */
             *j = -3;
          }
       } else {
 
-      /* Insufficient data for 4-coefficient fit */
+      /* Insufficient data for 4-coefficient fit. */
          *j = -2;
       }
    } else {
 
-   /* Illegal itype - not 4 or 6 */
+   /* Illegal itype: not 4 or 6. */
       *j = -1;
    }
 }

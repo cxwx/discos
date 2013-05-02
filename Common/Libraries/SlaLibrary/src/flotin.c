@@ -1,6 +1,7 @@
 #include "slalib.h"
 #include "slamac.h"
-void slaFlotin ( char *string, int *nstrt, float *reslt, int *jflag )
+void slaFlotin ( const char *string,
+                 int *nstrt, float *reslt, int *jflag )
 /*
 **  - - - - - - - - - -
 **   s l a F l o t i n
@@ -89,9 +90,9 @@ void slaFlotin ( char *string, int *nstrt, float *reslt, int *jflag )
 **             b)  Detected during the decode.
 **                 (b overrides a.)
 **
-**     18    See also slaDfltin and slaIntin.
+**     18    See also slaDfltin, slaInt2in and slaIntin.
 **
-**  Last revision:   23 November 1995
+**  Last revision:   13 July 2008
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */

@@ -19,7 +19,7 @@ void slaDmoon ( double date, double pv[6] )
 **
 **  Notes:
 **
-**  1  This routine is a full implementation of the algorithm
+**  1  This function is a full implementation of the algorithm
 **     published by Meeus (see reference).
 **
 **  2  Meeus quotes accuracies of 10 arcsec in longitude, 3 arcsec in
@@ -30,7 +30,7 @@ void slaDmoon ( double date, double pv[6] )
 **     and 81 mm/s in distance.  The maximum errors over the same
 **     interval are 18 arcsec and 0.50 arcsec/hour in longitude,
 **     11 arcsec and 0.24 arcsec/hour in latitude, 40 km and 0.29 m/s
-**     in distance. 
+**     in distance.
 **
 **  3  The original algorithm is expressed in terms of the obsolete
 **     timescale Ephemeris Time.  Either TDB or TT can be used, but
@@ -50,7 +50,7 @@ void slaDmoon ( double date, double pv[6] )
 **
 **  Defined in slamac.h:  DD2R, DAS2R, DS2R, dmod
 **
-**  Last revision:   22 January 1998
+**  Last revision:   12 August 2008
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
@@ -127,7 +127,7 @@ void slaDmoon ( double date, double pv[6] )
                  e2 = -0.00000752;
    double e, de, esq, desq;
 
-/* Coefficients for periodic variations etc */
+/* Coefficients for periodic variations etc. */
    static double pac = 0.000233, pa0 = 51.2,
                                  pa1 = 20.2;
    static double pbc = -0.001778;

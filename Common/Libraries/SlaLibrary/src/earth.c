@@ -20,25 +20,26 @@ void slaEarth ( int iy, int id, float fd, float pv[6] )
 **
 **  Notes:
 **
-**  1  The date and time is TDB (loosely ET) in a Julian calendar
-**     which has been aligned to the ordinary Gregorian
+**  1  The date and time is TDB (TT is always adequate) in a Julian
+**     calendar which has been aligned to the ordinary Gregorian
 **     calendar for the interval 1900 March 1 to 2100 February 28.
 **     The year and day can be obtained by calling slaCalyd or
 **     slaClyd.
 **
 **  2  The Earth heliocentric 6-vector is mean equator and equinox
-**     of date.  Position part, PV(1-3), is in AU;  velocity part,
-**     PV(4-6), is in AU/sec.
+**     of date.  The position part, pv([0-2], is in AU;  the velocity
+**     part, pv[3-5], is in AU/sec.
 **
 **  3  Max/RMS errors 1950-2050:
 **       13/5 E-5 AU = 19200/7600 km in position
 **       47/26 E-10 AU/s = 0.0070/0.0039 km/s in speed
 **
-**  4  More precise results are obtainable with the routine slaEvp.
+**  4  More accurate results are obtainable with the functions slaEvp
+**     and slaEpv.
 **
 **  Defined in slamac.h:  D2PI, dmod
 **
-**  Last revision:   25 April 1996
+**  Last revision:   17 September 2009
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */

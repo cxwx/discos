@@ -1,8 +1,8 @@
 #include "slalib.h"
 #include "slamac.h"
 void slaAoppa ( double date, double dut, double elongm, double phim,
-                double hm, double xp, double yp, double tdk,
-                double pmb, double rh, double wl, double tlr,
+                double hm, double xp, double yp, double tk,
+                double phpa, double rh, double wlfq, double tlr,
                 double aoprms[14] )
 /*
 **  - - - - - - - - -
@@ -14,17 +14,17 @@ void slaAoppa ( double date, double dut, double elongm, double phim,
 **
 **  Given:
 **     date   d      UTC date/time (Modified Julian Date, JD-2400000.5)
-**     dut    d      delta UT:  UT1-UTC (UTC seconds)
+**     dut    d      delta UT:  UT1-UTC (seconds)
 **     elongm d      mean longitude of the observer (radians, east +ve)
 **     phim   d      mean geodetic latitude of the observer (radians)
 **     hm     d      observer's height above sea level (metres)
 **     xp     d      polar motion x-coordinate (radians)
 **     yp     d      polar motion y-coordinate (radians)
-**     tdk    d      local ambient temperature (DegK; std=273.155)
-**     pmb    d      local atmospheric pressure (mB; std=1013.25)
-**     rh     d      local relative humidity (in the range 0.0-1.0)
-**     wl     d      effective wavelength (micron, e.g. 0.55)
-**     tlr    d      tropospheric lapse rate (DegK/metre, e.g. 0.0065)
+**     tk     d      ambient temperature at the observer (K)
+**     phpa   d      pressure at the observer (hPa = millibar)
+**     rh     d      relative humidity at the observer (range 0-1)
+**     wlfq   d      wavelength (micron) or minus frequency (GHz)
+**     tlr    d      tropospheric lapse rate (K/metre, e.g. 0.0065)
 **
 **  Returned:
 **     aoprms d[14]  star-independent apparent-to-observed parameters:
@@ -33,10 +33,10 @@ void slaAoppa ( double date, double dut, double elongm, double phim,
 **       (1,2)    sine and cosine of geodetic latitude
 **       (3)      magnitude of diurnal aberration vector
 **       (4)      height (hm)
-**       (5)      ambient temperature (tdk)
-**       (6)      pressure (pmb)
+**       (5)      temperature (tk)
+**       (6)      pressure (hPa)
 **       (7)      relative humidity (rh)
-**       (8)      wavelength (wl)
+**       (8)      wavelength or minus frequency (wlfq)
 **       (9)      lapse rate (tlr)
 **       (10,11)  refraction constants A and B (radians)
 **       (12)     longitude + eqn of equinoxes + sidereal DUT (radians)
@@ -64,12 +64,12 @@ void slaAoppa ( double date, double dut, double elongm, double phim,
 **       within +/- 0.9 seconds.
 **
 **   4)  IMPORTANT -- TAKE CARE WITH THE LONGITUDE SIGN CONVENTION.
-**       The longitude required by the present routine is east-positive,
-**       in accordance with geographical convention (and right-handed).
-**       In particular, note that the longitudes returned by the
-**       slaObs routine are west-positive, following astronomical
-**       usage, and must be reversed in sign before use in the present
-**       routine.
+**       The longitude required by the present function is
+**       east-positive in accordance with geographical convention (and
+**       right-handed).  In particular, note that the longitudes
+**       returned by the slaObs function are west-positive, following
+**       astronomical usage, and must be reversed in sign before use in
+**       the present function.
 **
 **   5)  The polar coordinates xp,yp can be obtained from IERS
 **       circulars and equivalent publications.  The maximum amplitude
@@ -79,36 +79,45 @@ void slaAoppa ( double date, double dut, double elongm, double phim,
 **
 **   6)  The height above sea level of the observing station, hm,
 **       can be obtained from the Astronomical Almanac (Section J
-**       in the 1988 edition), or via the routine slaObs.  If p,
-**       the pressure in millibars, is available, an adequate
+**       in the 1988 edition), or via the function slaObs.  If p,
+**       the pressure in hPa (millibars), is available, an adequate
 **       estimate of hm can be obtained from the expression
 **
 **             hm = -29.3 * tsl * log ( p / 1013.25 );
 **
-**       where tsl is the approximate sea-level air temperature
-**       in deg K (See Astrophysical Quantities, C.W.Allen,
-**       3rd edition, section 52).  Similarly, if the pressure p
-**       is not known, it can be estimated from the height of the
-**       observing station, hm as follows:
+**       where tsl is the approximate sea-level air temperature in K
+**       (See Astrophysical Quantities, C.W.Allen, 3rd edition, section
+**       52).  Similarly, if the pressure p is not known, it can be
+**       estimated from the height of the observing station, hm, as
+**       follows:
 **
 **             p = 1013.25 * exp ( -hm / ( 29.3 * tsl ) );
 **
-**       Note, however, that the refraction is proportional to the
-**       pressure and that an accurate p value is important for
+**       Note, however, that the refraction is nearly proportional to
+**       the pressure and that an accurate p value is important for
 **       precise work.
 **
 **   7)  Repeated, computationally-expensive, calls to slaAoppa for
 **       times that are very close together can be avoided by calling
 **       slaAoppa just once and then using slaAoppat for the subsequent
-**       times.  Fresh calls to slaAoppa will be needed only when changes
-**       in the precession have grown to unacceptable levels or when
-**       anything affecting the refraction has changed.
+**       times.  Fresh calls to slaAoppa will be needed only when
+**       changes in the equation of the equinoxes or the polar motion
+**       have grown to unacceptable levels or when anything affecting
+**       the refraction has changed.
+**
+**   8)  The argument wlfq specifies whether the refraction corrections
+**       are for the optical or radio, and the wavelength/frequency.
+**       Positive values specify wavelength in microns and are the usual
+**       way of selecting the optical case.  Negative values specify
+**       frequency in GHz and are the usual way of selecting the radio
+**       case.  The transition from optical to radio is assumed to occur
+**       at 100 microns (about 3000 GHz).
 **
 **  Defined in slamac.h:  D2PI, DS2R
 **
 **  Called:  slaGeoc, slaRefco, slaEqeqx, slaAoppat
 **
-**  Last revision:   30 November 2000
+**  Last revision:   16 April 2013
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
@@ -118,6 +127,7 @@ void slaAoppa ( double date, double dut, double elongm, double phim,
 
 {
    double cphim, xt, yt, zt, xc, yc, zc, elong, phi, uau, vau;
+
 
 /* Observer's location corrected for polar motion */
    cphim = cos( phim );
@@ -141,12 +151,12 @@ void slaAoppa ( double date, double dut, double elongm, double phim,
 
 /* Copy the refraction parameters and compute the A & B constants */
    aoprms[4] = hm;
-   aoprms[5] = tdk;
-   aoprms[6] = pmb;
+   aoprms[5] = tk;
+   aoprms[6] = phpa;
    aoprms[7] = rh;
-   aoprms[8] = wl;
+   aoprms[8] = wlfq;
    aoprms[9] = tlr;
-   slaRefco ( hm, tdk, pmb, rh, wl, phi, tlr, 1e-10,
+   slaRefco ( hm, tk, phpa, rh, wlfq, phi, tlr, 1e-10,
               &aoprms[10], &aoprms[11] );
 
 /* Longitude + equation of the equinoxes + sidereal equivalent of DUT */

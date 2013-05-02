@@ -23,7 +23,7 @@ void slaDc62s ( double v[6], double *a, double *b, double *r,
 **     *bd   double     latitude derivative (radians per unit time)
 **     *rd   double     radial derivative
 **
-**  Last revision:   11 June 1998
+**  Last revision:   30 July 2009
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
@@ -40,15 +40,16 @@ void slaDc62s ( double v[6], double *a, double *b, double *r,
    zd = v[5];
 
 /* Component of R in XY plane squared. */
-   rxy2 = x * x + y * y;
+   rxy2 = x*x + y*y;
 
 /* Modulus squared, with protection against null vector. */
-   if ( ( r2 = rxy2 + z * z ) == 0.0 ) {
+   r2 = rxy2 + z*z;
+   if ( r2 == 0.0 ) {
       x = xd;
       y = yd;
       z = zd;
-      rxy2 = x * x + y * y;
-      r2 = rxy2 + z * z;
+      rxy2 = x*x + y*y;
+      r2 = rxy2 + z*z;
    }
 
 /* Position and velocity in spherical coordinates. */
@@ -65,5 +66,6 @@ void slaDc62s ( double v[6], double *a, double *b, double *r,
       *ad = 0.0;
       *bd = 0.0;
    }
-   *rd = ( ( *r = sqrt ( r2 ) ) != 0.0 ) ? ( xyp + z * zd ) / ( *r ) : 0.0;
+   *r = sqrt ( r2 );
+   *rd = ( *r != 0.0 ) ? ( xyp + z*zd ) / ( *r ) : 0.0;
 }

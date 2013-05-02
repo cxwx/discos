@@ -7,7 +7,7 @@ void slaEg50 ( double dr, double dd, double *dl, double *db )
 **  - - - - - - - -
 **
 **  Transformation from B1950.0 'FK4' equatorial coordinates to
-**  IAU 1958 Galactic coordinates.
+**  IAU 1958 galactic coordinates.
 **
 **  (double precision)
 **
@@ -15,22 +15,21 @@ void slaEg50 ( double dr, double dd, double *dl, double *db )
 **     dr,dd       double       B1950.0 'FK4' RA,dec
 **
 **  Returned:
-**     *dl,*db     double       Galactic longitude and latitude l2,b2
+**     *dl,*db     double       galactic longitude and latitude l2,b2
 **
 **  (all arguments are radians)
 **
-**  Called:
-**     slaDcs2c, slaDmxv, slaDcc2s, slaSubet, slaDranrm, slaDrange
+**  Called:  slaDcs2c, slaDmxv, slaDcc2s, slaSubet, slaDranrm, slaDrange
 **
 **  Note:
 **     The equatorial coordinates are B1950.0 'FK4'.  Use the
-**     routine slaEqgal if conversion from J2000.0 coordinates
+**     function slaEqgal if conversion from J2000.0 coordinates
 **     is required.
 **
 **  Reference:
-**     Blaauw et al, Mon.Not.R.astron.Soc.,121,123 (1960)
+**     Blaauw et al., 1960, Mon.Not.R.astron.Soc., 121, 123
 **
-**  Last revision:   16 November 1993
+**  Last revision:   8 May 2011
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
@@ -38,15 +37,15 @@ void slaEg50 ( double dr, double dd, double *dl, double *db )
    double v1[3], v2[3], r, d;
 
 /*
-** l2,b2 system of Galactic coordinates
+** l2,b2 system of galactic coordinates
 **
-** p = 192.25       RA of Galactic north pole (mean B1950.0)
-** q =  62.6        inclination of Galactic to mean B1950.0 equator
+** p = 192.25       RA of galactic north pole (mean B1950.0)
+** q =  62.6        inclination of galactic to mean B1950.0 equator
 ** r =  33          longitude of ascending node
 **
 ** p,q,r are degrees
 **
-** Equatorial to Galactic rotation matrix
+** Equatorial to galactic rotation matrix
 **
 ** The Euler angles are p, q, 90-r, about the z then y then
 ** z axes.
@@ -58,32 +57,27 @@ void slaEg50 ( double dr, double dd, double *dl, double *db )
 **        +cp.sq              +sp.sq              +cq
 */
 
-   static double rmat[3][3];
-
-   rmat[0][0] = -0.066988739415;
-   rmat[0][1] = -0.872755765852;
-   rmat[0][2] = -0.483538914632;
-   rmat[1][0] =  0.492728466075;
-   rmat[1][1] = -0.450346958020;
-   rmat[1][2] =  0.744584633283;
-   rmat[2][0] = -0.867600811151;
-   rmat[2][1] = -0.188374601723;
-   rmat[2][2] =  0.460199784784;
+   static double rmat[3][3] =
+   {
+      { -0.066988739415151, -0.872755765851993, -0.483538914632184 },
+      {  0.492728466075324, -0.450346958019961,  0.744584633283031 },
+      { -0.867600811151435, -0.188374601722920,  0.460199784783852 }
+   };
 
 
-/* Remove e-terms */
+/* Remove e-terms. */
    slaSubet ( dr, dd, 1950.0, &r, &d );
 
-/* Spherical to Cartesian */
+/* Spherical to Cartesian. */
    slaDcs2c ( r, d, v1 );
 
-/* Rotate to Galactic */
+/* Rotate to Galactic. */
    slaDmxv ( rmat, v1, v2 );
 
-/* Cartesian to spherical */
+/* Cartesian to spherical. */
    slaDcc2s ( v2, dl, db );
 
-/* Express angles in conventional ranges */
+/* Express angles in conventional ranges. */
    *dl = slaDranrm ( *dl );
    *db = slaDrange ( *db );
 }

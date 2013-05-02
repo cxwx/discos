@@ -12,7 +12,7 @@ void slaSvd ( int m, int n, int mp, int np, double *a, double *w,
 **
 **  (double precision)
 **
-**  This routine expresses a given matrix a as the product of
+**  This function expresses a given matrix a as the product of
 **  three matrices u, w, v:
 **
 **     a = u x w x vt
@@ -45,35 +45,37 @@ void slaSvd ( int m, int n, int mp, int np, double *a, double *w,
 **     (n.b. v contains matrix v, not the transpose of matrix v)
 **
 **  References:
-**     The algorithm is an adaptation of the routine SVD in the EISPACK
-**     library (Garbow et al 1977, Eispack guide extension, Springer
-**     Verlag), which is a Fortran 66 implementation of the Algol
-**     routine SVD of Wilkinson & Reinsch 1971 (Handbook for Automatic
-**     Computation, vol 2, Ed Bauer et al, Springer Verlag).  For the
-**     non-specialist, probably the clearest general account of the use
-**     of SVD in least squares problems is given in Numerical Recipes
-**     (Press et al 1986, Cambridge University Press).
-**
-**  From slamac.h:  TRUE, FALSE
+**     The algorithm is an adaptation of the SVD subroutine in the
+**     EISPACK library (Garbow et al 1977, Eispack guide extension,
+**     Springer Verlag), which is a Fortran 66 implementation of the
+**     Algol procedure SVD of Wilkinson & Reinsch 1971 (Handbook for
+**     Automatic Computation, vol 2, Ed Bauer et al, Springer Verlag).
+**     For the non-specialist, probably the clearest general account of
+**     the use of SVD in least squares problems is given in Numerical
+**     Recipes (Press et al 1986, Cambridge University Press).
 **
 **  Example call (note handling of "adjustable dimension" 2D arrays):
 **
-**    double a[MP][NP], w[NP], v[NP][NP], work[NP];
+**    double a[mp][np], w[np], v[np][np], work[np];
 **    int m, n, j;
 **     :
-**    slaSvd ( m, n, MP, NP, (double *) a, w, (double *) v, work, &j );
+**    slaSvd ( m, n, mp, np, (double*) a, w, (double*) v, work, &j );
 **
-**  Last revision:   28 November 2000
+**  Last revision:   11 January 2013
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
 
 /* Maximum number of iterations in QR phase */
 #define ITMAX 30
-{
 
-   int i, k, l, j, k1, its, l1, i1, cancel;
+{
+   int l, l1, i, k, j, k1, its, i1, cancel;
    double g, scale, an, s, x, f, h, cn, c, y, z;
+
+
+/* Variable initializations to avoid compiler warnings. */
+   l = l1 = 0;
 
 /* Check that the matrix is the right size and shape. */
    if ( m < n || m > mp || n > np ) {
@@ -233,28 +235,23 @@ void slaSvd ( int m, int n, int mp, int np, double *a, double *w,
          for ( its = 1; its <= ITMAX; its++ ) {
 
          /* Test for splitting into submatrices. */
-            cancel = TRUE;
+            cancel = 1;
             for ( l = k; l >= 0; l-- ) {
                l1 = l - 1;
                if ( an + fabs ( work[l] ) == an ) {
-                  cancel = FALSE;
+                  cancel = 0;
                   break;
                }
             /* (Following never attempted for l=0 because work[0] is zero.) */
-               if ( an + fabs ( w[l1] ) == an ) {
-                  break;
-               }
+               if ( an + fabs ( w[l1] ) == an ) break;
             }
 
          /* Cancellation of work[l] if l>0. */
             if ( cancel ) {
-               c = 0.0;
                s = 1.0;
                for ( i = l; i <= k; i++ ) {
                   f = s * work[i];
-                  if ( an + fabs ( f ) == an ) {
-                     break;
-                  }
+                  if ( an + fabs ( f ) == an ) break;
                   g = w[i];
                   h = rms ( f, g );
                   w[i] = h;

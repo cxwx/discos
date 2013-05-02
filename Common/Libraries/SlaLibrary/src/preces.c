@@ -1,7 +1,7 @@
 #include "slalib.h"
 #include "slamac.h"
 #include <ctype.h>
-void slaPreces ( char sys[3], double ep0, double ep1,
+void slaPreces ( const char sys[3], double ep0, double ep1,
                  double *ra, double *dc )
 /*
 **  - - - - - - - - - -
@@ -19,17 +19,16 @@ void slaPreces ( char sys[3], double ep0, double ep1,
 **  Returned:
 **     *ra,*dc    double     RA,Dec, mean equator & equinox of epoch ep1
 **
-**  Called:    slaDranrm, slaPrebn, slaPrec, slaDcs2c,
-**             slaDmxv, slaDcc2s
+**  Called:  slaDranrm, slaPrebn, slaPrec, slaDcs2c, slaDmxv, slaDcc2s
 **
 **  Notes:
 **
 **  1)  The epochs are Besselian if sys='FK4' and Julian if 'FK5'.
-**      For example, to precess coordinates in the old system from
+**      For example, to precess coordinates in the older system from
 **      equinox 1900.0 to 1950.0 the call would be:
 **          slaPreces ( "FK4", 1900.0, 1950.0, &ra, &dc )
 **
-**  2)  This routine will not correctly convert between the old and
+**  2)  This function will not correctly convert between the old and
 **      the new systems - for example conversion from B1950 to J2000.
 **      For these purposes see slaFk425, slaFk524, slaFk45z and
 **      slaFk54z.
@@ -37,16 +36,17 @@ void slaPreces ( char sys[3], double ep0, double ep1,
 **  3)  If an invalid sys is supplied, values of -99.0,-99.0 will
 **      be returned for both ra and dc.
 **
-**  Last revision:   15 June 2001
+**  Last revision:   8 May 2011
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
 {
    double pm[3][3], v1[3], v2[3];
 
+
 /* Validate sys */
-   if ( ( toupper ( (int) sys[0] ) != 'F' )
-     || ( toupper ( (int) sys[1] ) != 'K' )
+   if ( toupper ( (int) sys[0] ) != 'F'
+     || toupper ( (int) sys[1] ) != 'K'
      || ( (int) sys[2] != '4' && (int) sys[2] != '5' ) ) {
          *ra = -99.0;          /* Error */
          *dc = -99.0;

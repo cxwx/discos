@@ -20,16 +20,16 @@ void slaDtp2s ( double xi, double eta, double raz, double decz,
 **
 **  Called:  slaDranrm
 **
-**  Last revision:   3 June 1995
+**  Last revision:   2 April 2012
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
 {
   double sdecz, cdecz, denom;
 
-  sdecz = sin ( decz );
-  cdecz = cos ( decz );
-  denom = cdecz - eta * sdecz;
+  sdecz = sin(decz);
+  cdecz = cos(decz);
+  denom = cdecz - eta*sdecz;
   *ra = slaDranrm ( atan2 ( xi, denom ) + raz );
-  *dec = atan2 ( sdecz + eta * cdecz, sqrt ( xi * xi + denom * denom ) );
+  *dec = atan2 ( sdecz + eta*cdecz, sqrt ( xi*xi + denom*denom ) );
 }

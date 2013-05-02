@@ -12,15 +12,15 @@ void slaDv2tp ( double v[3], double v0[3], double *xi, double *eta, int *j )
 **  (double precision)
 **
 **  Given:
-**     v         double[3]    direction cosines of star
-**     v0        double[3]    direction cosines of tangent point
+**     v        double[3]  direction cosines of star
+**     v0       double[3]  direction cosines of tangent point
 **
 **  Returned:
-**     *xi,*eta  double       tangent plane coordinates of star
-**     j         int          status:   0  =  OK
-**                                      1  =  error, star too far from axis
-**                                      2  =  error, antistar on tangent plane
-**                                      3  =  error, antistar too far from axis
+**     *xi,*eta double     tangent plane coordinates of star
+**     j        int        status: 0 = OK
+**                                 1 = error, star too far from axis
+**                                 2 = error, antistar on tangent plane
+**                                 3 = error, antistar too far from axis
 **
 **  Notes:
 **
@@ -30,9 +30,10 @@ void slaDv2tp ( double v[3], double v0[3], double *xi, double *eta, int *j )
 **  2  If v0 points at a pole, the returned xi,eta will be based on the
 **     arbitrary assumption that the RA of the tangent point is zero.
 **
-**  3  This routine is the Cartesian equivalent of the routine slaDs2tp.
+**  3  This function is the Cartesian equivalent of the function
+**     slaDs2tp.
 **
-**  Last revision:   1 January 2001
+**  Last revision:   21 August 2010
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
@@ -47,14 +48,14 @@ void slaDv2tp ( double v[3], double v0[3], double *xi, double *eta, int *j )
    x0 = v0[0];
    y0 = v0[1];
    z0 = v0[2];
-   r2 = x0 * x0 + y0 * y0;
+   r2 = x0*x0 + y0*y0;
    r = sqrt ( r2 );
    if ( r == 0.0 ) {
       r = 1e-20;
       x0 = r;
    }
-   w = x * x0 + y * y0;
-   d = w + z * z0;
+   w = x*x0 + y*y0;
+   d = w + z*z0;
    if ( d > TINY ) {
       *j = 0;
    } else if ( d >= 0.0 ) {
@@ -67,6 +68,6 @@ void slaDv2tp ( double v[3], double v0[3], double *xi, double *eta, int *j )
       *j = 3;
    }
    d *= r;
-   *xi = ( y * x0 - x * y0 ) / d;
-   *eta = ( z * r2 - z0 * w ) / d;
+   *xi = ( y*x0 - x*y0 ) / d;
+   *eta = ( z*r2 - z0*w ) / d;
 }

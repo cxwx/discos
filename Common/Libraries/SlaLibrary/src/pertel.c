@@ -1,11 +1,11 @@
 #include "slalib.h"
 #include "slamac.h"
-void slaPertel (int jform, double date0, double date1,
-                double epoch0, double orbi0, double anode0,
-                double perih0, double aorq0, double e0, double am0,
-                double *epoch1, double *orbi1, double *anode1,
-                double *perih1, double *aorq1, double *e1, double *am1,
-                int *jstat )
+void slaPertel ( int jform, double date0, double date1,
+                 double epoch0, double orbi0, double anode0,
+                 double perih0, double aorq0, double e0, double am0,
+                 double *epoch1, double *orbi1, double *anode1,
+                 double *perih1, double *aorq1, double *e1, double *am1,
+                 int *jstat )
 /*
 **  - - - - - - - - - -
 **   s l a P e r t e l
@@ -40,7 +40,7 @@ void slaPertel (int jform, double date0, double date1,
 **  Returned (status flag):
 **     jstat   int*     status: +102 = warning, distant epoch
 **                              +101 = warning, large timespan ( > 100 years)
-**                          +1 to +8 = coincident with major planet (Note 6)
+**                         +1 to +10 = coincident with planet (Note 6)
 **                                 0 = OK
 **                                -1 = illegal jform
 **                                -2 = illegal e0
@@ -91,31 +91,32 @@ void slaPertel (int jform, double date0, double date1,
 **
 **  4  Unused elements (am0 and am1 for jform=3) are not accessed.
 **
-**  5  See the slaPertue routine for details of the algorithm used.
+**  5  See the slaPertue function for details of the algorithm used.
 **
-**  6  This routine is not intended to be used for major planets, which
+**  6  This function is not intended to be used for major planets, which
 **     is why jform=1 is not available and why there is no opportunity
 **     to specify either the longitude of perihelion or the daily
 **     motion.  However, if jform=2 elements are somehow obtained for a
-**     major planet and supplied to the routine, sensible results will,
-**     in fact, be produced.  This happens because the slaPertue  routine
-**     that is called to perform the calculations checks the separation
-**     between the body and each of the planets and interprets a
-**     suspiciously small value (1E-3 AU) as an attempt to apply it to
-**     the planet concerned.  If this condition is detected, the
-**     contribution from that planet is ignored, and the status is set to
-**     the planet number (Mercury=1,...,Neptune=8) as a warning.
+**     major planet and supplied to the function, sensible results will,
+**     in fact, be produced.  This happens because the slaPertue
+**     function that is called to perform the calculations checks the
+**     separation between the body and each of the planets and
+**     interprets a suspiciously small value (1E-3 AU) as an attempt to
+**     apply it to the planet concerned.  If this condition is detected,
+**     the contribution from that planet is ignored, and the status is
+**     set to the planet number (1-10 = Mercury, Venus, EMB, Mars,
+**     Jupiter, Saturn, Uranus, Neptune, Earth, Moon) as a warning.
 **
 **  Reference:
 **
 **     Sterne, Theodore E., "An Introduction to Celestial Mechanics",
 **     Interscience Publishers Inc., 1960.  Section 6.7, p199.
 **
-**  Called:  slaEl2ue,  slaPertue,  slaUe2el
+**  Called:  slaEl2ue, slaPertue, slaUe2el
 **
-**  Last revision:   23 May 2001
+**  Last revision:   29 January 2012
 **
-**  Copyright 2001 P.T.Wallace.  All rights reserved.
+**  Copyright P.T.Wallace.  All rights reserved.
 */
 {
    double u[13], dm;
@@ -126,6 +127,10 @@ void slaPertel (int jform, double date0, double date1,
    if ( jform < 2 || jform > 3 ) {
       *jstat = -1;
       return;
+   } else {
+
+   /* Provisionally set the status to OK. */
+      *jstat = 0;
    }
 
 /* Transform the elements from conventional to universal form. */

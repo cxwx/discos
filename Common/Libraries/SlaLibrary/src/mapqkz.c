@@ -12,31 +12,31 @@ void slaMapqkz ( double rm, double dm, double amprms[21],
 **  star-independent parameters, and assuming zero parallax
 **  and proper motion.
 **
-**  Use of this routine is appropriate when efficiency is important
+**  Use of this function is appropriate when efficiency is important
 **  and where many star positions, all with parallax and proper
 **  motion either zero or already allowed for, and all referred to
 **  the same equator and equinox, are to be transformed for one
 **  epoch.  The star-independent parameters can be obtained by
-**  calling the slaMappa routine.
+**  calling the slaMappa function.
 **
-**  The corresponding routine for the case of non-zero parallax
+**  The corresponding function for the case of non-zero parallax
 **  and proper motion is slaMapqk.
 **
 **  The reference frames and timescales used are post IAU 1976.
 **
 **  Given:
-**     rm,dm    double      mean RA,dec (rad)
-**     amprms   double[21]  star-independent mean-to-apparent parameters:
+**     rm,dm    double     mean RA,dec (rad)
+**     amprms   double[21] star-independent mean-to-apparent parameters:
 **
 **       (0-3)    not used
 **       (4-6)    heliocentric direction of the Earth (unit vector)
-**       (7)      (grav rad Sun)*2/(Sun-Earth distance)
+**       (7)      (Schwarzschild radius of the Sun)/(Sun-Earth distance)
 **       (8-10)   abv: barycentric Earth velocity in units of c
-**       (11)     sqrt(1-v**2) where v=modulus(abv)
+**       (11)     sqrt(1-v^2) where v=modulus(abv)
 **       (12-20)  precession/nutation (3,3) matrix
 **
 **  Returned:
-**     *ra,*da  double      apparent RA,dec (rad)
+**     *ra,*da  double     apparent RA,dec (rad)
 **
 **  References:
 **     1984 Astronomical Almanac, pp B39-B41.
@@ -45,10 +45,10 @@ void slaMapqkz ( double rm, double dm, double amprms[21],
 **
 **  Notes:
 **
-**    1)  The vectors amprms(1-3) and amprms(4-6) are referred to the
-**        mean equinox and equator of epoch eq.
+**    1)  The vector amprms(4-6) is referred to the mean equinox and
+**        equator of epoch eq.
 **
-**    2)  Strictly speaking, the routine is not valid for solar-system
+**    2)  Strictly speaking, the function is not valid for solar-system
 **        sources, though the error will usually be extremely small.
 **        However, to prevent gross errors in the case where the
 **        position of the Sun is specified, the gravitational
@@ -57,14 +57,9 @@ void slaMapqkz ( double rm, double dm, double amprms[21],
 **        about 1.85 arcsec at this radius, and decreases to zero as
 **        the centre of the disc is approached.
 **
-**  Called:
-**     slaDcs2c       spherical to Cartesian
-**     slaDvdv        dot product
-**     slaDmxv        matrix x vector
-**     slaDcc2s       Cartesian to spherical
-**     slaDranrm      normalize angle 0-2pi
+**  Called:  slaDcs2c, slaDvdv, slaDmxv, slaDcc2s, slaDranrm
 **
-**  Last revision:   17 August 1999
+**  Last revision:   23 August 2012
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */

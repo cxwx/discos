@@ -8,7 +8,8 @@ void slaEl2ue ( double date, int jform, double epoch, double orbinc,
 **   s l a E l 2 u e
 **  - - - - - - - - -
 **
-**  Transform conventional osculating orbital elements into "universal" form.
+**  Transform conventional osculating orbital elements into "universal"
+**  form.
 **
 **  Given:
 **     date    double     epoch (TT MJD) of osculation (Note 3)
@@ -60,14 +61,14 @@ void slaEl2ue ( double date, int jform, double epoch, double orbinc,
 **     estimate of psi, the "universal eccentric anomaly" at a given
 **     date and (v) that date.
 **
-**  2  The companion routine is slaUe2pv.  This takes the set of numbers
-**     that the present routine outputs and uses them to derive the
-**     object's position and velocity.  A single prediction requires one
-**     call to the present routine followed by one call to slaUe2pv;
-**     for convenience, the two calls are packaged as the routine
-**     slaPlanel.  Multiple predictions may be made by again calling the
-**     present routine once, but then calling slaUe2pv multiple times,
-**     which is faster than multiple calls to slaPlanel.
+**  2  The companion function is slaUe2pv.  This takes the set of
+**     numbers that the present function outputs and uses them to derive
+**     the object's position and velocity.  A single prediction requires
+**     one call to the present function followed by one call to
+**     slaUe2pv;  for convenience, the two calls are packaged as the
+**     function slaPlanel.  Multiple predictions may be made by again
+**     calling the present function once, but then calling slaUe2pv
+**     multiple times, which is faster than multiple calls to slaPlanel.
 **
 **  3  date is the epoch of osculation.  It is in the TT timescale
 **     (formerly Ephemeris Time, ET) and is a Modified Julian Date
@@ -114,16 +115,21 @@ void slaEl2ue ( double date, int jform, double epoch, double orbinc,
 **     aorq   = perihelion distance, q (AU)
 **     e      = eccentricity, e (range 0 to 10)
 **
-**  7  Unused elements (dm for jform=2, aorl and dm for jform=3) are
+**  7  For the jform=1 case, small inaccuracies in aorq and/or dm can
+**     lead to an inconsistency in which the planet mass becomes
+**     negative.  In such cases, no error is reported, and the planet's
+**     mass is set to zero.
+**
+**  8  Unused elements (dm for jform=2, aorl and dm for jform=3) are
 **     not accessed.
 **
-**  8  The algorithm was originally adapted from the EPHSLA program of
+**  9  The algorithm was originally adapted from the EPHSLA program of
 **     D.H.P.Jones (private communication, 1996).  The method is based on
 **     Stumpff's Universal Variables.
 **
 **  Reference:  Everhart, E. & Pitkin, E.T., Am.J.Phys. 51, 712, 1983.
 **
-**  Last revision:   11 April 2000
+**  Last revision:   4 December 2012
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
@@ -177,7 +183,8 @@ void slaEl2ue ( double date, int jform, double epoch, double orbinc,
       argph = perih - anode;
       q = aorq * ( 1.0 - e );
       w = dm / GCON;
-      cm =  w * w * aorq * aorq * aorq;
+      cm =  w*w *aorq*aorq*aorq;
+      cm = cm < 1.0 ? 1.0 : cm;
       break;
 
 /* Minor planet. */
@@ -264,7 +271,7 @@ void slaEl2ue ( double date, int jform, double epoch, double orbinc,
 
    dt = ( date - pht ) * GCON;
 
-/* First Approximation to the Universal Eccentric Anomaly, psi, */
+/* First approximation to the Universal Eccentric Anomaly, psi, */
 /* based on the circle (fc) and parabola (fp) values.           */
    fc = dt / q;
    w = pow ( 3.0 * dt + sqrt ( 9.0 * dt * dt + 8.0 * q * q * q ),

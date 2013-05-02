@@ -1,7 +1,7 @@
 #include "slalib.h"
 #include "slamac.h"
 #include <string.h>
-void slaDbjin ( char *string, int *nstrt,
+void slaDbjin ( const char *string, int *nstrt,
                 double *dreslt, int *jf1, int *jf2 )
 /*
 **  - - - - - - - - -
@@ -45,7 +45,7 @@ void slaDbjin ( char *string, int *nstrt,
 **
 **  For details of the basic syntax, see slaDfltin.
 **
-**  Last revision:   22 December 1993
+**  Last revision:   13 July 2008
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
@@ -57,7 +57,7 @@ void slaDbjin ( char *string, int *nstrt,
    j2a = 0;
 
 /* Length of string */
-   lenstr = strlen ( string );
+   lenstr = (int) strlen ( string );
 
 /* Position of current character */
    na = *nstrt;

@@ -159,7 +159,7 @@ void slaUe2el ( double u[], int jformr,
 **
 **  Called:  slaPv2el
 **
-**  Last revision:   18 March 1999
+**  Last revision:   12 August 2008
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
@@ -183,7 +183,7 @@ void slaUe2el ( double u[], int jformr,
       pv[i+3] = u[i+6] * CD2S;
    }
 
-/* Convert the position and velocity etc into conventional elements. */
+/* Convert the position and velocity etc. into conventional elements. */
    slaPv2el ( pv, date, pmass, jformr, jform, epoch, orbinc, anode,
               perih, aorq, e, aorl, dm, jstat );
 

@@ -13,28 +13,28 @@ void slaPertue ( double date, double u[], int *jstat )
 **     date    double     final epoch (TT MJD) for the updated elements
 **
 **  Given and returned:
-**
 **     u       double[13] universal orbital elements (Note 1)
 **
-**                    [0] combined mass (M+m)
-**                    [1] total energy of the orbit (alpha)
-**                    [2] reference (osculating) epoch (t0)
-**                  [3-5] position at reference epoch (r0)
-**                  [6-8] velocity at reference epoch (v0)
-**                    [9] heliocentric distance at reference epoch
-**                   [10] r0.v0
-**                   [11] date (t)
-**                   [12] universal eccentric anomaly (psi) of date, approx
+**                [0] combined mass (M+m)
+**                [1] total energy of the orbit (alpha)
+**                [2] reference (osculating) epoch (t0)
+**              [3-5] position at reference epoch (r0)
+**              [6-8] velocity at reference epoch (v0)
+**                [9] heliocentric distance at reference epoch
+**               [10] r0.v0
+**               [11] date (t)
+**               [12] universal eccentric anomaly (psi) of date, approx
 **
 **  Returned:
-**     jstat   int*       status:
-**                          +102 = warning, distant epoch
-**                          +101 = warning, large timespan ( > 100 years)
-**                      +1 to +8 = coincident with major planet (Note 5)
-**                             0 = OK
-**                            -1 = numerical error
+**     jstat   int*      status:
+**                         +102 = warning, distant epoch
+**                         +101 = warning, large timespan ( > 100 years)
+**                    +1 to +10 = coincident with planet (Note 5)
+**                            0 = OK
+**                           -1 = numerical error
 **
-**  Called:  slaPlanet, slaUe2pv, slaPv2ue
+**  Called:  slaEpj, slaPlanet, slaPv2ue, slaUe2pv, slaEpv, slaPrec,
+**           slaDmoon, slaDmxv
 **
 **  Notes:
 **
@@ -58,26 +58,26 @@ void slaPertue ( double date, double u[], int *jstat )
 **  3  The epochs date, u[2] and u[11] are all Modified Julian Dates
 **     (JD-2400000.5).
 **
-**  4  The algorithm is a simplified form of Encke's method.  It takes as
-**     a basis the unperturbed motion of the body, and numerically
+**  4  The algorithm is a simplified form of Encke's method.  It takes
+**     as a basis the unperturbed motion of the body, and numerically
 **     integrates the perturbing accelerations from the major planets.
 **     The expression used is essentially Sterne's 6.7-2 (reference 1).
 **     Everhart and Pitkin (reference 2) suggest rectifying the orbit at
 **     each integration step by propagating the new perturbed position
 **     and velocity as the new universal variables.  In the present
-**     routine the orbit is rectified less frequently than this, in order
-**     to gain a slight speed advantage.  However, the rectification is
-**     done directly in terms of position and velocity, as suggested by
-**     Everhart and Pitkin, bypassing the use of conventional orbital
-**     elements.
+**     function the orbit is rectified less frequently than this, in
+**     order to gain a slight speed advantage.  However, the
+**     rectification is done directly in terms of position and velocity,
+**     as suggested by Everhart and Pitkin, bypassing the use of
+**     conventional orbital elements.
 **
 **     The f(q) part of the full Encke method is not used.  The purpose
 **     of this part is to avoid subtracting two nearly equal quantities
-**     when calculating the "indirect member", which takes account of the
-**     small change in the Sun's attraction due to the slightly displaced
-**     position of the perturbed body.  A simpler, direct calculation in
-**     double precision proves to be faster and not significantly less
-**     accurate.
+**     when calculating the "indirect member", which takes account of
+**     the small change in the Sun's attraction due to the slightly
+**     displaced position of the perturbed body.  A simpler, direct
+**     calculation in double precision proves to be faster and not
+**     significantly less accurate.
 **
 **     Apart from employing a variable timestep, and occasionally
 **     "rectifying the orbit" to keep the indirect member small, the
@@ -101,37 +101,42 @@ void slaPertue ( double date, double u[], int *jstat )
 **     planets.
 **
 **     The numerical integration requires estimates of the major-planet
-**     motions.  Approximate positions for the major planets (Pluto
-**     alone is omitted) are obtained from the routine slaPlanet.  Two
-**     levels of interpolation are used, to enhance speed without
-**     significantly degrading accuracy.  At a low frequency, the routine
-**     slaPlanet is called to generate updated position+velocity "state
-**     vectors".  The only task remaining to be carried out at the full
-**     frequency (i.e. at each integration step) is to use the state
-**     vectors to extrapolate the planetary positions.  In place of a
-**     strictly linear extrapolation, some allowance is made for the
-**     curvature of the orbit by scaling back the radius vector as the
-**     linear extrapolation goes off at a tangent.
+**     motions.  Approximate positions for the planets are obtained from
+**     the function slaPlanet.  Two levels of interpolation are used, to
+**     enhance speed without significantly degrading accuracy.  At a low
+**     frequency, the function slaPlanet is called to generate updated
+**     position+velocity "state vectors".  The only task remaining to be
+**     carried out at the full frequency (i.e. at each integration step)
+**     is to use the state vectors to extrapolate the planetary
+**     positions.  In place of a strictly linear extrapolation, some
+**     allowance is made for the curvature of the orbit by scaling back
+**     the radius vector as the linear extrapolation goes off at a
+**     tangent.
 **
-**     Various other approximations are made.  For example, perturbations
-**     by Pluto and the minor planets are neglected, relativistic effects
-**     are not taken into account and the Earth-Moon system is treated as
-**     a single body.
+**     Various other approximations are made.  For example,
+**     perturbations by Pluto and the minor planets are neglected and
+**     relativistic effects are not taken into account.
 **
 **     In the interests of simplicity, the background calculations for
-**     the major planets are carried out en masse.  The mean elements and
-**     state vectors for all the planets are refreshed at the same time,
-**     without regard for orbit curvature, mass or proximity.
+**     the major planets are carried out en masse.  The mean elements
+**     and state vectors for all the planets are refreshed at the same
+**     time, without regard for orbit curvature, mass or proximity.
 **
-**  5  This routine is not intended to be used for major planets.
+**     The Earth-Moon system is treated as a single body when the body
+**     is distant but as separate bodies when closer to the EMB than the
+**     parameter RNE, which incurs a time penalty but improves accuracy
+**     for near-Earth objects.
+**
+**  5  This function is not intended to be used for major planets.
 **     However, if major-planet elements are supplied, sensible results
-**     will, in fact, be produced.  This happens because the routine
-**     checks the separation between the body and each of the planets and
-**     interprets a suspiciously small value (0.001 AU) as an attempt to
-**     apply the routine to the planet concerned.  If this condition is
-**     detected, the contribution from that planet is ignored, and the
-**     status is set to the planet number (Mercury=1,...,Neptune=8) as a
-**     warning.
+**     will, in fact, be produced.  This happens because the function
+**     checks the separation between the body and each of the planets
+**     and interprets a suspiciously small value (0.001 AU) as an
+**     attempt to apply the function to the planet concerned.  If this
+**     condition is detected, the contribution from that planet is
+**     ignored, and the status is set to the planet number (1-10 =
+**     Mercury, Venus, EMB, Mars, Jupiter, Saturn, Uranus, Neptune,
+**     Earth, Moon) as a warning.
 **
 **  References:
 **
@@ -140,10 +145,16 @@ void slaPertue ( double date, double u[], int *jstat )
 **
 **     2  Everhart, E. & Pitkin, E.T., Am.J.Phys. 51, 712, 1983.
 **
-**  Last revision:   18 March 1999
+**  Last revision:   11 January 2013
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
+
+/* Distance from EMB at which Earth and Moon are treated separately */
+#define RNE 1.0
+
+/* Coincidence with major planet distance */
+#define COINC 0.0001
 
 /* Coefficient relating timestep to perturbing force */
 #define TSC 1e-4
@@ -204,7 +215,7 @@ void slaPertue ( double date, double u[], int *jstat )
    double t;
 
 /* Epoch of planetary mean elements */
-   double tpel;
+   double tpel = 0.0;
 
 /* Planet number (1=Mercury, 2=Venus, 3=EMB...8=Neptune) */
    int np;
@@ -213,10 +224,19 @@ void slaPertue ( double date, double u[], int *jstat )
    double up[8][13];
 
 /* Epoch of planetary state vectors */
-   double tpmo;
+   double tpmo = 0.0;
 
 /* State vectors for the major planets (AU,AU/s) */
    double pvin[8][6];
+
+/* Earth velocity and position vectors (AU,AU/s) */
+   double vb[3], pb[3], vh[3], pe[3];
+
+/* Moon geocentric state vector (AU,AU/s) and position part */
+   double pvm[6], pm[3];
+
+/* Date to J2000 de-precession matrix */
+   double pmat[3][3];
 
 /* Correction terms for extrapolated major planet vectors */
    double r2x3[8], /* Sun-to-planet distances squared multiplied by 3 */
@@ -231,7 +251,7 @@ void slaPertue ( double date, double u[], int *jstat )
    double r03, r3;
 
 /* The perturbating accelerations, indirect and direct */
-   double fi[3], fd[3];
+   double fi[3], fd[3] = { 0.0, 0.0, 0.0 };
 
 /* Sun-to-planet vector, and distance cubed */
    double rho[3], rho3;
@@ -240,19 +260,21 @@ void slaPertue ( double date, double u[], int *jstat )
    double delta[3], delta3;
 
 /* Miscellaneous */
-   int i, j, npm1;
-   double r2, w, dt, dt2, ft;
+   int i, j, npm1, ne;
+   double r2, w, dt, dt2, r, ft;
 
-/* Planetary inverse masses, Mercury through Neptune */
+/* Planetary inverse masses, Mercury thru Neptune then Earth & Moon */
    static double amas[] = {
       6023600.0,
        408523.5,
        328900.5,
       3098710.0,
-       1047.355,
+         1047.355,
          3498.5,
         22869.0,
-        19314.0
+        19314.0,
+       332946.038,
+     27068709.0
    };
 
 
@@ -292,7 +314,7 @@ void slaPertue ( double date, double u[], int *jstat )
    }
 
 /* Set "first iteration" flag. */
-   first = TRUE;
+   first = 1;
 
 /* Step through the time left. */
    while ( fb * tleft > 0.0 ) {
@@ -393,7 +415,7 @@ void slaPertue ( double date, double u[], int *jstat )
       }
 
    /* Reset the first-time flag. */
-      first = FALSE;
+      first = 0;
 
    /* Unperturbed motion of the body at middle of timestep (AU,AU/s). */
       slaUe2pv ( t, ul, pv0, &j );
@@ -427,54 +449,103 @@ void slaPertue ( double date, double u[], int *jstat )
 
    /* Ready to compute the direct planetary effects. */
 
+   /* Reset the "near-Earth" flag. */
+      ne = 0;
+
    /* Interval from state-vector epoch to middle of current timestep. */
       dt = t - tpmo;
       dt2 = dt * dt;
 
    /* Planet by planet. */
-      for ( np = 1; np <= 8; np++ ) {
+      for ( np = 1; np <= 10; np++ ) {
          npm1 = np - 1;
 
-      /* First compute the extrapolation in longitude (squared). */
-         r2 = 0.0;
-         for ( j = 3; j < 6; j++ ) {
-            w = pvin[npm1][j] * dt;
-            r2 += w * w;
-         }
+      /* Which perturbing body? */
+         if ( np <= 8 ) {
 
-      /* Hence the tangential-to-circular correction factor. */
-         fc = 1.0 + r2 / r2x3[npm1];
+         /* Planet: compute the extrapolation in longitude (squared). */
+            r2 = 0.0;
+            for ( j = 3; j < 6; j++ ) {
+               w = pvin[npm1][j] * dt;
+               r2 += w * w;
+            }
 
-      /* The radial correction factor due to the inwards acceleration. */
-         fg = 1.0 - gc[npm1] * dt2;
+         /* Hence the tangential-to-circular correction factor. */
+            fc = 1.0 + r2 / r2x3[npm1];
 
-      /* Planet's position, and heliocentric distance cubed. */
-         r2 = 0.0;
-         for ( i = 0; i < 3; i++ ) {
-            w = fg * ( pvin[npm1][i] + fc * pvin[npm1][i+3] * dt );
-            rho[i] = w;
-            r2 += w * w;
-         }
-         rho3 = r2 * sqrt ( r2 );
+         /* The radial correction factor due to the inwards acceleration. */
+            fg = 1.0 - gc[npm1] * dt2;
 
-      /* Body-to-planet vector, and distance cubed. */
-         r2 = 0.0;
-         for ( i = 0; i < 3; i++ ) {
-            w = rho[i] - pv[i];
-            delta[i] = w;
-            r2 += w * w;
-         }
-         delta3 = r2 * sqrt ( r2 );
-
-      /* If too close, ignore this planet and set a warning. */
-         if ( r2 < 1e-6 ) {
-            *jstat = np;
-         } else {
-
-         /* Accumulate "direct" part of perturbation acceleration. */
-            w = amas[npm1];
+         /* Planet's position. */
             for ( i = 0; i < 3; i++ ) {
-               fd[i] += ( delta[i] / delta3 - rho[i] / rho3 ) / w;
+               rho[i] = fg * ( pvin[npm1][i] + fc * pvin[npm1][i+3] * dt );
+            }
+
+         } else if ( ne ) {
+
+         /* Near-Earth and either Earth or Moon. */
+
+            if ( np == 9 ) {
+
+            /* Earth: position. */
+               slaEpv ( t, pe, vh, pb, vb );
+               for ( i = 0; i < 3; i++ ) {
+                  rho[i] = pe[i];
+               }
+
+            } else {
+
+            /* Moon: position. */
+               slaPrec ( slaEpj ( t ), 2000.0, pmat );
+               slaDmoon ( t, pvm );
+               slaDmxv ( pmat, pvm, pm );
+               for ( i = 0; i < 3; i++ ) {
+                  rho[i] = pm[i] + pe[i];
+               }
+            }
+         }
+
+      /* Proceed unless Earth or Moon and not the near-Earth case. */
+         if ( np <= 8 || ne ) {
+
+         /* Heliocentric distance cubed. */
+            r2 = 0.0;
+            for ( i = 0; i < 3; i++ ) {
+               w = rho[i];
+               r2 += w * w;
+            }
+            r = sqrt ( r2 );
+
+            rho3 = r2 * r;
+
+         /* Body-to-planet vector, and distance cubed. */
+            r2 = 0.0;
+            for ( i = 0; i < 3; i++ ) {
+               w = rho[i] - pv[i];
+               delta[i] = w;
+               r2 += w * w;
+            }
+            r = sqrt ( r2 );
+
+         /* If this is the EMB, set the near-Earth flag appropriately. */
+            if ( np == 3 && r < RNE ) ne = 1;
+
+         /* Proceed unless EMB and this is the near-Earth case. */
+            if ( ! ( ne && ( np == 3 ) ) ) {
+
+            /* If too close, ignore this planet and set a warning. */
+               if ( r < COINC ) {
+                  *jstat = np;
+
+               } else {
+
+               /* Accumulate "direct" part of perturbation acceleration. */
+                  delta3 = r2 * r;
+                  w = amas[npm1];
+                  for ( i = 0; i < 3; i++ ) {
+                     fd[i] += ( delta[i] / delta3 - rho[i] / rho3 ) / w;
+                  }
+               }
             }
          }
       }

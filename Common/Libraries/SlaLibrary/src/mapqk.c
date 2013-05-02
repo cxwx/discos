@@ -12,14 +12,14 @@ void slaMapqk ( double rm, double dm, double pr, double pd,
 **  mean place to geocentric apparent place, given the
 **  star-independent parameters.
 **
-**  Use of this routine is appropriate when efficiency is important
+**  Use of this function is appropriate when efficiency is important
 **  and where many star positions, all referred to the same equator
 **  and equinox, are to be transformed for one epoch.  The
 **  star-independent parameters can be obtained by calling the
-**  slaMappa routine.
+**  slaMappa function.
 **
 **  If the parallax and proper motions are zero the slaMapqkz
-**  routine can be used instead.
+**  function can be used instead.
 **
 **  The reference frames and timescales used are post IAU 1976.
 **
@@ -34,9 +34,9 @@ void slaMapqk ( double rm, double dm, double pr, double pd,
 **       (0)      time interval for proper motion (Julian years)
 **       (1-3)    barycentric position of the Earth (AU)
 **       (4-6)    heliocentric direction of the Earth (unit vector)
-**       (7)      (grav rad Sun)*2/(Sun-Earth distance)
+**       (7)      (Schwarzschild radius of the Sun)/(Sun-Earth distance)
 **       (8-10)   barycentric Earth velocity in units of c
-**       (11)     sqrt(1-v**2) where v=modulus(abv)
+**       (11)     sqrt(1-v^2) where v=modulus(abv)
 **       (12-20)  precession/nutation (3,3) matrix
 **
 **  Returned:
@@ -51,7 +51,7 @@ void slaMapqk ( double rm, double dm, double pr, double pd,
 **    1)  The vectors amprms(1-3) and amprms(4-6) are referred to
 **        the mean equinox and equator of epoch eq.
 **
-**    2)  Strictly speaking, the routine is not valid for solar-system
+**    2)  Strictly speaking, the function is not valid for solar-system
 **        sources, though the error will usually be extremely small.
 **        However, to prevent gross errors in the case where the
 **        position of the Sun is specified, the gravitational
@@ -59,6 +59,8 @@ void slaMapqk ( double rm, double dm, double pr, double pd,
 **        centre of the Sun's disc.  The term has a maximum value of
 **        about 1.85 arcsec at this radius, and decreases to zero as
 **        the centre of the disc is approached.
+**
+**    3)  See the slaMap function for further information.
 **
 **  Called:
 **     slaDcs2c       spherical to Cartesian
@@ -69,12 +71,12 @@ void slaMapqk ( double rm, double dm, double pr, double pd,
 **
 **  Defined in slamac.h:  DAS2R
 **
-**  Last revision:   15 January 2000
+**  Last revision:   6 December 2012
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
 
-#define VF 0.21094502     /* Km/s to AU/year */
+#define VF 0.210949528     /* Km/s to AU/year */
 
 {
    int i;

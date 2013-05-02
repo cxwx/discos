@@ -24,7 +24,7 @@ void slaCc62s ( float v[6],
 **     *bd   float      latitude derivative (radians per unit time)
 **     *rd   float      radial derivative
 **
-**  Last revision:   28 April 1996
+**  Last revision:   30 July 2009
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
@@ -44,7 +44,8 @@ void slaCc62s ( float v[6],
    rxy2 = x * x + y * y;
 
 /* Modulus squared, with protection against null vector. */
-   if ( ( r2 = rxy2 + z * z ) == 0.0 ) {
+   r2 = rxy2 + z * z;
+   if ( r2 == 0.0 ) {
       x = xd;
       y = yd;
       z = zd;

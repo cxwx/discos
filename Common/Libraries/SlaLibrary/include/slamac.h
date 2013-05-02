@@ -8,43 +8,36 @@
 **
 **  Macros used by slalib library.
 **
-**  Last revision:   16 October 2000
+**  Last revision:   11 January 2013
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
 
 /* max(A,B) - larger (most +ve) of two numbers (generic) */
-#define gmax(A,B) ((A)>(B)?(A):(B))
+#define gmax(A,B) (((A)>(B))?(A):(B))
 
 /* min(A,B) - smaller (least +ve) of two numbers (generic) */
-#define gmin(A,B) ((A)<(B)?(A):(B))
+#define gmin(A,B) (((A)<(B))?(A):(B))
 
 /* dint(A) - truncate to nearest whole number towards zero (double) */
-#define dint(A) ((A)<0.0?ceil(A):floor(A))
+#define dint(A) (((A)<0.0)?ceil(A):floor(A))
 
 /* aint(A) - truncate to nearest whole number towards zero (float) */
-#define aint(A) ((A)<0.0f?(float)ceil((double)(A)):(float)floor((double)(A)))
+#define aint(A) (((A)<0.0f)?(float)ceil((double)(A))\
+                                             :(float)floor((double)(A)))
 
 /* dnint(A) - round to nearest whole number (double) */
-#define dnint(A) ((A)<0.0?ceil((A)-0.5):floor((A)+0.5))
+#define dnint(A) (((A)<0.0)?ceil((A)-0.5):floor((A)+0.5))
 
 /* anint(A) - round to nearest whole number (float) */
 #define anint(A) ((float)dnint((double)(A)))
 
 /* dsign(A,B) - magnitude of A with sign of B (double) */
-#define dsign(A,B) ((B)<0.0?-(A):(A))
+#define dsign(A,B) ((B)<0.0?-fabs(A):fabs(A))
 
 /* dmod(A,B) - A modulo B (double) */
-#define dmod(A,B) ((B)!=0.0?((A)*(B)>0.0?(A)-(B)*floor((A)/(B))\
-                                        :(A)+(B)*floor(-(A)/(B))):(A))
-
-/* logicals */
-#if !defined(FALSE) || ((FALSE)!=0)
-#define FALSE 0
-#endif
-#if !defined(TRUE) || ((TRUE)!=1)
-#define TRUE 1
-#endif
+#define dmod(A,B) (((B)!=0.0)?((A)*(B)>0.0?(A)-(B)*floor((A)/(B))\
+                                          :(A)+(B)*floor(-(A)/(B))):(A))
 
 /* pi */
 #define DPI 3.1415926535897932384626433832795028841971693993751

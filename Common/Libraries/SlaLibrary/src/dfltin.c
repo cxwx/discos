@@ -2,9 +2,10 @@
 #include "slamac.h"
 #include <string.h>
 
-static int idchf ( int, char*, int*, int*, double* );
+static int idchf ( int, const char*, int*, int*, double* );
 
-void slaDfltin ( char *string, int *nstrt, double *dreslt, int *jflag )
+void slaDfltin ( const char *string,
+                 int *nstrt, double *dreslt, int *jflag )
 /*
 **  - - - - - - - - - -
 **   s l a D f l t i n
@@ -93,9 +94,9 @@ void slaDfltin ( char *string, int *nstrt, double *dreslt, int *jflag )
 **             b)  Detected during the decode.
 **                 (b overrides a.)
 **
-**     18    See also slaFlotin and slaIntin.
+**     18    See also slaFlotin, slaIntin and slaInt2in.
 **
-**  Last revision:   6 November 1999
+**  Last revision:   29 July 2009
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
@@ -112,8 +113,8 @@ void slaDfltin ( char *string, int *nstrt, double *dreslt, int *jflag )
 #define END    8
 
 {
-   int l_string, nptr, ndigit;
-   double digit;
+   int l_string, nptr, ndigit=0;
+   double digit=0.0;
 
 /* Current state of the decode and the values it can take */
 
@@ -142,12 +143,12 @@ void slaDfltin ( char *string, int *nstrt, double *dreslt, int *jflag )
 #define done                           9900
 
 
-   int msign, nexp, ndp, isignx, j;
+   int msign, nexp, ndp, isignx, j=0;
    double dmant;
 
 
 /* Find string length */
-   l_string = strlen ( string );
+   l_string = (int) strlen ( string );
 
 /* Current character index */
    nptr = *nstrt - 1;
@@ -526,14 +527,14 @@ void slaDfltin ( char *string, int *nstrt, double *dreslt, int *jflag )
    *jflag = j;
 }
 
-static int idchf ( int l_string, char *string,
+static int idchf ( int l_string, const char *string,
                    int *nptr, int *ndigit, double *digit )
 /*
 **  - - - - -
 **   i d c h f
 **  - - - - -
 **
-**  Internal routine used by slaDfltin:
+**  Internal function used by slaDfltin:
 **
 **  identify next character in string.
 **
@@ -562,7 +563,7 @@ static int idchf ( int l_string, char *string,
 **                                OTHER   else
 **                                END     outside field
 **
-**  Last revision:   24 June 1996
+**  Last revision:   13 July 2008
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */

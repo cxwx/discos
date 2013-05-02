@@ -1,7 +1,7 @@
 #include "slalib.h"
 #include "slamac.h"
-void slaRefco ( double hm, double tdk, double pmb, double rh,
-                double wl, double phi, double tlr, double eps,
+void slaRefco ( double hm, double tk, double phpa, double rh,
+                double wlfq, double phi, double tlr, double eps,
                 double *refa, double *refb )
 /*
 **  - - - - - - - - -
@@ -17,12 +17,12 @@ void slaRefco ( double hm, double tdk, double pmb, double rh,
 **
 **  Given:
 **    hm    double    height of the observer above sea level (metre)
-**    tdk   double    ambient temperature at the observer (deg k)
-**    pmb   double    pressure at the observer (millibar)
+**    tk    double    ambient temperature at the observer (K)
+**    phpa  double    pressure at the observer (hPa = millibar)
 **    rh    double    relative humidity at the observer (range 0-1)
-**    wl    double    effective wavelength of the source (micrometre)
+**    wlfq  double    wavelength (micron) or minus frequency (GHz)
 **    phi   double    latitude of the observer (radian, astronomical)
-**    tlr   double    temperature lapse rate in the troposphere (degk/metre)
+**    tlr   double    temperature lapse rate in the troposphere (K/metre)
 **    eps   double    precision required to terminate iteration (radian)
 **
 **  Returned:
@@ -36,16 +36,21 @@ void slaRefco ( double hm, double tdk, double pmb, double rh,
 **  1  Typical values for the tlr and eps arguments might be 0.0065 and
 **     1e-10 respectively.
 **
-**  2  The radio refraction is chosen by specifying wl > 100 micrometres.
+**  2  The argument wlfq specifies whether optical or radio and the
+**     wavelength/frequency.  Positive values specify wavelength in
+**     microns and are the usual way of selecting the optical case.
+**     Negative values specify frequency in GHz and are the usual way of
+**     selecting the radio case.  The transition from optical to radio
+**     is assumed to occur at 100 microns (about 3000 GHz).
 **
-**  3  The routine is a slower but more accurate alternative to the
-**     slaRefcoq routine.  The constants it produces give perfect
+**  3  The function is a slower but more accurate alternative to the
+**     slaRefcoq function.  The constants it produces give perfect
 **     agreement with slaRefro at zenith distances arctan(1) (45 deg)
 **     and arctan(4) (about 76 deg).  It achieves 0.5 arcsec accuracy
 **     for ZD < 80 deg, 0.01 arcsec accuracy for ZD < 60 deg, and
 **     0.001 arcsec accuracy for ZD < 45 deg.
 **
-**  Last revision:   4 June 1997
+**  Last revision:   11 August 2008
 **
 **  Copyright P.T.Wallace.  All rights reserved.
 */
@@ -57,8 +62,8 @@ void slaRefco ( double hm, double tdk, double pmb, double rh,
    static double atn4 = 1.325817663668033;
 
 /* Determine refraction for the two sample zenith distances. */
-   slaRefro ( atn1, hm, tdk, pmb, rh, wl, phi, tlr, eps, &r1 );
-   slaRefro ( atn4, hm, tdk, pmb, rh, wl, phi, tlr, eps, &r2 );
+   slaRefro ( atn1, hm, tk, phpa, rh, wlfq, phi, tlr, eps, &r1 );
+   slaRefro ( atn4, hm, tk, phpa, rh, wlfq, phi, tlr, eps, &r2 );
 
 /* Solve for refraction constants. */
    *refa = ( 64.0 * r1 - r2 ) / 60.0;

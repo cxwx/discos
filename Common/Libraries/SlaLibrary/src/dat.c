@@ -28,28 +28,28 @@ double slaDat ( double utc )
 **  2  For epochs from 1961 January 1 onwards, the expressions from the
 **     file ftp://maia.usno.navy.mil/ser7/tai-utc.dat are used.
 **
-**  3  The 5ms timestep at 1961 January 1 is taken from 2.58.1 (p87) of
+**  3  The 5ms time step at 1961 January 1 is taken from 2.58.1 (p87) of
 **     the 1992 Explanatory Supplement.
 **
 **  4  UTC began at 1960 January 1.0 (JD 2436934.5) and it is improper
-**     to call the routine with an earlier epoch.  However, if this
+**     to call the function with an earlier epoch.  However, if this
 **     is attempted, the TAI-UTC expression for the year 1960 is used.
 **
 **     :-----------------------------------------:
 **     :                                         :
 **     :                IMPORTANT                :
 **     :                                         :
-**     :  This routine must be updated on each   :
+**     :  This function must be updated on each  :
 **     :     occasion that a leap second is      :
 **     :                announced                :
 **     :                                         :
-**     :  Latest leap second:  2012 July  1st    :
+**     :  Latest leap second:  2012 June 30      :
 **     :                                         :
 **     :-----------------------------------------:
 **
-**  Last revision:   06 August 2012
+**  Last revision:   5 January 2012
 **
-**  Copyright 1999 P.T.Wallace.  All rights reserved.
+**  Copyright P.T.Wallace.  All rights reserved.
 */
 {
 
@@ -59,16 +59,14 @@ double slaDat ( double utc )
 /* the preamble comments appropriately.      */
 /* - - - - - - - - - - - - - - - - - - - - - */
 
-/* ireference http://time5.nrc.ca/timefreq/IERS.html */
-
 /* 2012 July 1 */
-	if (utc>=56109.0) return 35.0;
+   if ( utc >= 56109.0 ) return 35.0;
 
-/* 2009 junuary 1 */
-	if (utc>=54832.0) return 34.0;
-	
-/* 2006 Junuary 1 */
-	if (utc >=53736.0) return 33.0;
+/* 2009 January 1 */
+   if ( utc >= 54832.0 ) return 34.0;
+
+/* 2006 January 1 */
+   if ( utc >= 53736.0 ) return 33.0;
 
 /* 1999 January 1 */
    if ( utc >= 51179.0 ) return 32.0;
