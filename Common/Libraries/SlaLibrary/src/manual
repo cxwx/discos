@@ -1,0 +1,29 @@
+#!/usr/bin/perl
+
+#+
+#  - - - - - - -
+#   m a n u a l
+#  - - - - - - -
+#
+#  Extract a manual from all the .c files in the current directory,
+#  comprising the call and preamble comments from each file.
+#
+#  Last revision:   6 November 1999
+#
+#  Copyright P.T.Wallace.  All rights reserved.
+#-
+
+open ( M, ">".($m = "manual.txt") ) || die "Can't open $m!\n";
+while ( <*.c> ) {
+   open ( C, $_ );
+      if ( $begun || $begun++ ) { print M "\f\n" }
+      print M "\n";
+      $printing = 0;
+      while ( <C> ) {
+         if ( ! ( /^\#include/ || /^static/ || /^\s/ ) ) { $printing = 1 }
+         if ( $printing ) { print M }
+         if ( /^\*\// ) { last }
+      }
+   close ( C );
+}
+close ( M );
